@@ -28,6 +28,7 @@ from opentracing_instrumentation.request_context import get_current_span, span_i
 import simplejson as json
 import requests
 import sys
+from subprocess import call
 from json2html import *
 import logging
 import os
@@ -122,6 +123,21 @@ tracer = Tracer(
     sampler=ConstSampler(decision=True),
     extra_codecs={Format.HTTP_HEADERS: B3Codec()}
 )
+
+#Modificamos el html (falta crear la variable de entorno, que se hace en el Dockerfile)
+group_number = os.getenv('GROUP_NUMBER')
+fin = open("practica_creativa2/bookinfo/src/productpage/templates/productpage.html", "r")
+fout = open("practica_creativa2/bookinfo/src/productpage/templates/productpage2.html", "w")
+for line in fin:
+        if "{% block title %}Simple Bookstore App{% endblock %}" in line:
+                fout.write("{% block title %}"+group_number+"{% endblock %}")
+        else :
+                fout.write(line)
+fin.close()
+fout.close()
+call(["rm", "practica_creativa2/bookinfo/src/productpage/templates/productpage.html"])
+call(["cp", "practica_creativa2/bookinfo/src/productpage/templates/productpage2.html", "practica_creativa2/bookinfo/src/productpage/templates/productpage.html"])
+call(["rm", "practica_creativa2/bookinfo/src/productpage/templates/productpage2.html"])
 
 
 def trace():
