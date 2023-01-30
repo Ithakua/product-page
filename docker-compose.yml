@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+
+  productpage:
+    image: 13/productpage
+    ports:
+      - 9080:9080
+    volumes: 
+      - productPage:/app
+    container_name: 13-productpage
+    depends_on:
+      - details
+      - reviews
+  details:
+    image: 13/details    
+    container_name: 13-details
+    volumes:
+      - details:/opt/microservices
+
+  reviews:
+    image: 13/reviews:v2  
+    container_name: 13-reviews
+    depends_on:
+      - ratings
+
+  ratings:
+    image: 13/ratings
+    container_name: 13-ratings
+    volumes:
+      - product-page:/opt/microservices
+
+volumes:
+  productPage:
+  details:
+  prueba:
+  product-page:  
